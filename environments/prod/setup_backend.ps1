@@ -1,16 +1,41 @@
 # Sign in to Azure
-az login --use-device-code
+# az login --use-device-code
 
-# Read prod.sensitive.tfvars file
-$TfvarsContent = Get-Content -Path "prod.sensitive.tfvars"
+# Check if prod.sensitive.tfvars file exists
+if (Test-Path -Path "prod.sensitive.tfvars") {
+  # Read prod.sensitive.tfvars file
+  $TfvarsContent = Get-Content -Path "prod.sensitive.tfvars"
 
-# Parse key-value pairs
-$Tfvars = @{}
-foreach ($Line in $TfvarsContent) {
-    if ($Line -match '^\s*(\S+)\s*=\s*"(.*)"\s*$') {
-        $Key, $Value = $Matches[1], $Matches[2]
-        $Tfvars[$Key] = $Value
-    }
+  # Parse key-value pairs
+  $Tfvars = @{}
+  foreach ($Line in $TfvarsContent) {
+      if ($Line -match '^\s*(\S+)\s*=\s*"(.*)"\s*$') {
+          $Key, $Value = $Matches[1], $Matches[2]
+          $Tfvars[$Key] = $Value
+      }
+  }
+} else {
+  # Prompt user for input
+  $ResourceGroupName = Read-Host -Prompt 'Enter the backend resource group name'
+  $StorageAccountName = Read-Host -Prompt 'Enter the backend storage account name'
+  $ContainerName = Read-Host -Prompt 'Enter the backend container name'
+
+  # Create prod.sensitive.tfvars file with user input
+  $TfvarsContent = @"
+backend_resource_group_name  = "$ResourceGroupName"
+backend_storage_account_name = "$StorageAccountName"
+backend_container_name       = "$ContainerName"
+"@
+  Set-Content -Path "prod.sensitive.tfvars" -Value $TfvarsContent
+
+  # Parse the created prod.sensitive.tfvars file
+  $Tfvars = @{}
+  foreach ($Line in ($TfvarsContent -split "`n")) {
+      if ($Line -match '^\s*(\S+)\s*=\s*"(.*)"\s*$') {
+          $Key, $Value = $Matches[1], $Matches[2]
+          $Tfvars[$Key] = $Value
+      }
+  }
 }
 
 # Set up variables from prod.sensitive.tfvars
