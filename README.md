@@ -15,34 +15,26 @@ This Terraform project creates an Azure Resource Group using a simple and modula
 
 ## Setup
 
+Setup
 1. Clone the repository to your local machine.
-2. Open the project in Visual Studio Code.
+2. Open the project in Visual Studio Code or your preferred editor.
 3. In the terminal, navigate to the project root directory.
-4. Run the `setup_backend.ps1` script to set up the Terraform backend in Azure and generate the `backend.tf` file:
+4. Run the `setup_backend.ps1` script to set up the Terraform backend in Azure. This script will prompt you to input required information for your backend configuration. If the backend.sensitive.tfvars file does not exist, it will be created with the provided information:
+5. The setup_backend.ps1 script will generate a backend.tf file with the necessary configurations for the Terraform backend.
 
-```powershell
-.\setup_backend.ps1
-```
-
-5. Review and modify the variable values in `prod.tfvars` and `prod.sensitive.tfvars` files as needed. Make sure these files contain the correct values for your environment and resources.
+6. Review and modify the variable values in prod.tfvars and backend.sensitive.tfvars files as needed. Make sure these files contain the correct values for your environment and resources. Keep sensitive information like secrets and API keys in the backend.sensitive.tfvars file, and use prod.tfvars for other variables.
 
 ## Usage
 
 ### Workspaces
 
 - To create a new workspace for your environment, run:
-
-```powershell
-terraform workspace new <workspace_name>
-```
+`terraform workspace new <workspace_name>`
 
 Replace `<workspace_name>` with a name for your environment, such as "dev", "staging", or "prod".
 
 - To switch between workspaces, run:
-
-```powershell
-terraform workspace select <workspace_name>
-```
+`terraform workspace select <workspace_name>`
 
 Replace `<workspace_name>` with the name of the workspace you want to switch to.
 
@@ -50,39 +42,27 @@ Replace `<workspace_name>` with the name of the workspace you want to switch to.
 
 1. Initialize the Terraform working directory:
 
-```powershell
-terraform init
-```
+`terraform init`
 
 2. (Optional) Format your Terraform files to ensure they follow the standard formatting conventions:
 
-```powershell
-terraform fmt
-```
+`terraform fmt`
 
 3. (Optional) Validate the Terraform configuration files for any errors:
 
-```powershell
-terraform validate
-```
+`terraform validate`
 
 4. (Optional) Generate an execution plan to preview the changes that will be made to your infrastructure:
 
-```powershell
-terraform plan -var-file="prod.tfvars"
-```
+`terraform plan -var-file="prod.tfvars"`
 
-5. To create a resource group, update the values in `prod.tfvars` and `prod.sensitive.tfvars`, then run:
+5. To create a resource group, update the values in `prod.tfvars` and `backend.sensitive.tfvars`, then run:
 
-```powershell
-terraform apply -var-file="prod.tfvars"
-```
+`terraform apply -var-file="prod.tfvars"`
 
 6. To destroy a resource group, run:
 
-```powershell
-terraform destroy -var-file="prod.tfvars"
-```
+`terraform destroy -var-file="prod.tfvars"`
 
 
 ## Contributing
